@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 /*
 * 注册接口
- */
+*/
 // 对象解构赋值传递参数
 export const registerAPI = ({ username, password, repassword }) => {
   return request({
@@ -12,6 +12,19 @@ export const registerAPI = ({ username, password, repassword }) => {
       username,
       password,
       repassword
+    }
+  })
+}
+/*
+* 登录接口
+*/
+export const loginAPI = ({ username, password }) => {
+  return request({
+    url: '/api/login',
+    method: 'POST',
+    data: {
+      username,
+      password
     }
   })
 }
