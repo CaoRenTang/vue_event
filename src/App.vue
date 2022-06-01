@@ -1,28 +1,20 @@
 <template>
-  <div id="app">
-
+  <div>
+    <el-button>按钮</el-button>
   </div>
 </template>
 
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { registerAPI } from '@/api'
 
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+export default {
+  async created () {
+    const res = await registerAPI()
+    console.log(res)
   }
 }
+</script>
+
+<style scoped>
+
 </style>
