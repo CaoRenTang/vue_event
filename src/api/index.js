@@ -1,16 +1,17 @@
 import request from '@/utils/request'
-// 每个方法只负责请求一个url地址
-// export导出接口方法，在逻辑页面使用
-export const registerAPI = () => {
-  // 这里先用这个接口测试下, 如果url以http开头会忽略baseURL, axios直接请求此地址
+/*
+* 注册接口
+ */
+// 对象解构赋值传递参数
+export const registerAPI = ({ username, password, repassword }) => {
   return request({
     url: '/api/reg',
     method: 'POST',
+    // ES6解构赋值时key和value一样，简写
     data: {
-      username: 'caort',
-      password: '123456',
-      repassword: '123456'
+      username,
+      password,
+      repassword
     }
-
   })
 }
