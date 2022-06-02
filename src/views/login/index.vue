@@ -29,9 +29,9 @@
     </div>
   </div>
 </template>
-
 <script>
 import { loginAPI } from '@/api'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'my-login',
@@ -56,6 +56,8 @@ export default {
     }
   },
   methods: {
+    // 映射mapMutations
+    ...mapMutations(['updateToken']),
     // ----------------------登录方法---------------------
     loginFn () {
       this.$refs.loginRef.validate(async valid => {
@@ -68,7 +70,10 @@ export default {
           if (res.code !== 0) return this.$message.error(res.message)
           // 3.登录成功
           this.$message.success(res.message)
-          // 4.跳转到主页面
+          // 4.保存到vuex中
+          this.updateToken(res.token)
+          // 5.跳转到主页面
+          this.$router.push('/layout')
         } else {
           return false
         }
