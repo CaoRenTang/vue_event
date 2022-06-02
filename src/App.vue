@@ -5,13 +5,11 @@
 </template>
 
 <script>
-//
 
 export default {
-  // async created () {
-  //   const res = await registerAPI()
-  //   console.log(res)
-  // }
+  created () {
+    this.$store.dispatch('getUserInfoActions')
+  }
 }
 </script>
 

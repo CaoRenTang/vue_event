@@ -65,7 +65,7 @@ export default {
           // console.log(this.loginForm)
           // 1.调用接口（解构赋值）
           const { data: res } = await loginAPI(this.loginForm)
-          console.log(res)
+          // console.log(res)
           // 2.登录失败
           if (res.code !== 0) return this.$message.error(res.message)
           // 3.登录成功
