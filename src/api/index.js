@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 import store from '@/store'
-/*
-* 注册接口
-*
-*/
+
+/** 注册接口
+ * @returns Promise对象
+ */
 // 对象解构赋值传递参数
 export const registerAPI = ({ username, password, repassword }) => {
   return request({
@@ -17,9 +17,9 @@ export const registerAPI = ({ username, password, repassword }) => {
     }
   })
 }
-/*
-* 登录接口
-*/
+/** 登录接口
+ * @returns Promise对象
+ */
 export const loginAPI = ({ username, password }) => {
   return request({
     url: '/api/login',
@@ -30,12 +30,23 @@ export const loginAPI = ({ username, password }) => {
     }
   })
 }
-/*
-* 获取用户信息
-*/
+/** 获取用户信息
+ * @returns Promise对象
+ */
 export const getUserInfoAPI = () => {
   return request({
     url: '/my/userinfo',
+    headers: {
+      Authorization: store.state.token
+    }
+  })
+}
+/** 获取侧边栏数据
+ * @returns Promise对象
+ */
+export const getMenusAPI = () => {
+  return request({
+    url: '/my/menus',
     headers: {
       Authorization: store.state.token
     }

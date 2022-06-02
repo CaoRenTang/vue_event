@@ -42,39 +42,25 @@
           @close="handleClose"
           @open="handleOpen"
           unique-opened
+          router
         >
-          <el-menu-item index="/home">
-            <i class="el-icon-s-home"></i>
-            <span slot="title">首页</span>
-          </el-menu-item>
-          <el-submenu index="/article">
-            <template slot="title">
-              <i class="el-icon-document"></i>
-              <span>文章管理</span>
-            </template>
-            <el-menu-item index="/article1">
-              <i class="el-icon-s-data"></i>
-              <span slot="title">文章分类</span>
+          <template v-for="item in menus">
+            <el-menu-item :index="item.indexPath" v-if="!item.children" :key="item.indexPath">
+              <i :class="item.icon"></i>
+              <span slot="title">{{ item.title }}</span>
             </el-menu-item>
-            <el-menu-item index="/article2">
-              <i class="el-icon-document-copy"></i>
-              <span slot="title">文章列表</span>
-            </el-menu-item>
-          </el-submenu>
-          <el-submenu index="/user">
-            <template slot="title">
-              <i class="el-icon-user-solid"></i>
-              <span>个人中心</span>
-            </template>
-            <el-menu-item index="/user1">
-              <i class="el-icon-s-tools"></i>
-              <span slot="title">用户设置</span>
-            </el-menu-item>
-            <el-menu-item index="/user2">
-              <i class="el-icon-message-solid"></i>
-              <span slot="title">用户通知</span>
-            </el-menu-item>
-          </el-submenu>
+            <el-submenu :index="item.indexPath" v-else :key="item.indexPath">
+              <template slot="title">
+                <i :class="item.icon"></i>
+                <span>{{ item.title }}</span>
+              </template>
+              <el-menu-item :index="obj.indexPath" v-for="obj in item.children" :key="obj.indexPath">
+                <i :class="obj.icon"></i>
+                <span slot="title">{{ obj.title }}</span>
+              </el-menu-item>
+            </el-submenu>
+
+          </template>
 
         </el-menu>
       </el-aside>
@@ -95,6 +81,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { getMenusAPI } from '@/api'
 
 export default {
   name: 'my-layout',
@@ -103,7 +90,9 @@ export default {
     ...mapGetters(['nickname', 'username', 'user_pic'])
   },
   data () {
-    return {}
+    return {
+      menus: [] // 保存侧边栏数据
+    }
   },
   methods: {
     quitFn () {
@@ -125,7 +114,18 @@ export default {
     },
     handleClose (key, keyPath) {
       console.log(key, keyPath)
+    },
+    async getMenusListFn () {
+      const res = await getMenusAPI()
+      // console.log(res)
+      this.menus = res.data.data
+      console.log(this.menus)
     }
+
+  },
+  // 钩子函数
+  created () {
+    this.getMenusListFn()
   }
 
 }
