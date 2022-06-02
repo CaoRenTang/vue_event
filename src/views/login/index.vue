@@ -46,7 +46,7 @@ export default {
       loginRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { pattern: /^[a-zA-Z0-9]{1,10}$/, message: '用户名必须是1-10的字母数字', trigger: 'blur' }
+          { pattern: /^[a-zA-Z\d]{1,10}$/, message: '用户名必须是1-10的字母数字', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
@@ -73,7 +73,7 @@ export default {
           // 4.保存到vuex中
           this.updateToken(res.token)
           // 5.跳转到主页面
-          this.$router.push('/layout')
+          await this.$router.push('/layout')
         } else {
           return false
         }
