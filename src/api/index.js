@@ -7,12 +7,9 @@ import request from '@/utils/request'
 export const registerAPI = ({ username, password, repassword }) => {
   return request({
     url: '/api/reg',
-    method: 'POST',
-    // ES6解构赋值时key和value一样，简写
+    method: 'POST', // ES6解构赋值时key和value一样，简写
     data: {
-      username,
-      password,
-      repassword
+      username, password, repassword
     }
   })
 }
@@ -24,8 +21,7 @@ export const loginAPI = ({ username, password }) => {
     url: '/api/login',
     method: 'POST',
     data: {
-      username,
-      password
+      username, password
     }
   })
 }
@@ -54,11 +50,7 @@ export const updateUserInfoAPI = ({ id, username, nickname, email, user_pic }) =
     url: '/my/userinfo',
     method: 'PUT',
     data: {
-      id,
-      username,
-      nickname,
-      email,
-      user_pic
+      id, username, nickname, email, user_pic
     }
   })
 }
@@ -71,6 +63,21 @@ export const updateAvatarAPI = (avatar) => {
     method: 'PATCH',
     data: {
       avatar // 头像base64字符串
+    }
+  })
+}
+/** 更新用户密码
+ * @return Promise对象
+ */
+// eslint-disable-next-line camelcase
+export const updatePwdAPI = (old_pwd, new_pwd, re_pwd) => {
+  return request({
+    url: '/my/updatepwd',
+    method: 'PATCH',
+    data: {
+      old_pwd,
+      new_pwd,
+      re_pwd
     }
   })
 }
