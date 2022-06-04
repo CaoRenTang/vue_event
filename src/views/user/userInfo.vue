@@ -66,9 +66,9 @@ export default {
           this.userForm.id = this.$store.state.userInfo.id
           // 调用接口
           const { data: res } = await updateUserInfoAPI(this.userForm)
-          if (res.code !== 0) return this.$message.error('更新用户信息失败')
+          if (res.code !== 0) return this.$message.error(res.message)
           // 更新用户信息成功
-          this.$message.success('更新用户信息成功')
+          this.$message.success(res.message)
           // 重新让vuex获取最新的用户数据
           this.$store.dispatch('getUserInfoActions')
         }
