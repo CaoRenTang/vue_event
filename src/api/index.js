@@ -45,3 +45,20 @@ export const getMenusAPI = () => {
     url: '/my/menus'
   })
 }
+/** 修改用户信息
+ * @returns Promise对象
+ */
+// eslint-disable-next-line camelcase
+export const updateUserInfoAPI = ({ id, username, nickname, email, user_pic }) => {
+  return request({
+    url: '/my/userinfo',
+    method: 'PUT',
+    data: {
+      id,
+      username,
+      nickname,
+      email,
+      user_pic
+    }
+  })
+}

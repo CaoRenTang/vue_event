@@ -37,7 +37,7 @@
           active-text-color="#409EFF"
           background-color="#24262d"
           class="el-menu-vertical-demo"
-          default-active="/home"
+          :default-active="$route.path"
           text-color="#fff"
           @close="handleClose"
           @open="handleOpen"
