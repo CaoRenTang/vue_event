@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import store from '@/store'
 
 /** 注册接口
  * @returns Promise对象
@@ -35,10 +34,7 @@ export const loginAPI = ({ username, password }) => {
  */
 export const getUserInfoAPI = () => {
   return request({
-    url: '/my/userinfo',
-    headers: {
-      Authorization: store.state.token
-    }
+    url: '/my/userinfo'
   })
 }
 /** 获取侧边栏数据
@@ -46,9 +42,6 @@ export const getUserInfoAPI = () => {
  */
 export const getMenusAPI = () => {
   return request({
-    url: '/my/menus',
-    headers: {
-      Authorization: store.state.token
-    }
+    url: '/my/menus'
   })
 }

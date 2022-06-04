@@ -119,7 +119,7 @@ export default {
       const res = await getMenusAPI()
       // console.log(res)
       this.menus = res.data.data
-      console.log(this.menus)
+      // console.log(this.menus)
     }
 
   },
