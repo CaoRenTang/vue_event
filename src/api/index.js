@@ -70,7 +70,7 @@ export const updateAvatarAPI = (avatar) => {
  * @return Promise对象
  */
 // eslint-disable-next-line camelcase
-export const updatePwdAPI = (old_pwd, new_pwd, re_pwd) => {
+export const updatePwdAPI = ({ old_pwd, new_pwd, re_pwd }) => {
   return request({
     url: '/my/updatepwd',
     method: 'PATCH',
