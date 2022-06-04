@@ -6,8 +6,15 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    component: () => import('@/views/layout')
+    path: '/', // 默认路径
+    component: () => import('@/views/layout'),
+    redirect: '/home', // 路由重定向
+    children: [
+      {
+        path: 'home',
+        component: () => import('@/views/home')
+      }
+    ]
     // 默认打开直接看到布局页
   },
   {
@@ -30,9 +37,6 @@ const router = new VueRouter({
 const whiteList = ['/login', '/reg'] // 白名单(无需登录可以访问的路由地址)
 
 // 全局前置路由守卫
-// 1: 浏览器第一次打开项目页面, 会触发一次全局前置路由守卫函数
-// 2: 判断登陆与否: 有token就证明登录了, 无token未登录
-// 3: next()如果强制切换路由地址, 会再次走路由守卫再次去匹配路由表
 router.beforeEach((to, from, next) => {
   const token = store.state.token
   if (token) {

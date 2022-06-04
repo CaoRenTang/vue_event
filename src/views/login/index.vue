@@ -73,7 +73,7 @@ export default {
           // 4.保存到vuex中
           this.updateToken(res.token)
           // 5.跳转到主页面
-          await this.$router.push('/layout')
+          await this.$router.push('/')
         } else {
           return false
         }
