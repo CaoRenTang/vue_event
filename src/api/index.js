@@ -103,3 +103,32 @@ export const saveArtCateAPI = ({ cate_name, cate_alias }) => {
     }
   })
 }
+/** 修改文章分类
+ * @return Promise对象
+ */
+// eslint-disable-next-line camelcase
+export const updateArtCateAPI = ({ id, cate_name, cate_alias }) => {
+  return request({
+    url: '/my/cate/info',
+    method: 'PUT',
+    data: {
+      id,
+      cate_name,
+      cate_alias
+
+    }
+  })
+}
+/**
+ * 删除-文章分类
+ * @returns Promise对象
+ */
+export const delArtCateAPI = (id) => {
+  return request({
+    url: '/my/cate/del',
+    method: 'DELETE',
+    params: {
+      id
+    }
+  })
+}
