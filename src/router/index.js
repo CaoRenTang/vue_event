@@ -11,24 +11,28 @@ const routes = [
     redirect: '/home', // 路由重定向
     children: [
       {
-        path: 'home',
+        path: 'home', // 主页
         component: () => import('@/views/home')
       },
       {
-        path: 'user-info',
+        path: 'user-info', // 基本资料
         component: () => import('@/views/user/userInfo.vue')
       },
       {
-        path: 'user-avatar',
+        path: 'user-avatar', // 更换头像
         component: () => import('@/views/user/userAvatar.vue')
       },
       {
-        path: 'user-pwd', // 必须用这个值
+        path: 'user-pwd', // 必须用这个值，重置密码
         component: () => import('@/views/user/userPwd.vue')
       },
       {
-        path: 'art-cate',
+        path: 'art-cate', // 文章分类
         component: () => import('@/views/article/artCate.vue')
+      },
+      {
+        path: 'art-list', // 文章列表
+        component: () => import('@/views/article/artList.vue')
       }
     ]
     // 默认打开直接看到布局页
