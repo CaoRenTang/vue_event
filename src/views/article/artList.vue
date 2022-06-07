@@ -68,6 +68,21 @@
           <!-- 使用 v-model 进行双向的数据绑定 -->
           <quill-editor v-model="pubForm.content"></quill-editor>
         </el-form-item>
+        <!--        文章封面-->
+        <el-form-item label="文章封面">
+          <!-- 用来显示封面的图片 -->
+          <img src="../../assets/images/cover.jpg" alt="" class="cover-img" ref="imgRef"/>
+          <br/>
+          <!-- 文件选择框，默认被隐藏 -->
+          <input type="file"
+                 style="display: none;"
+                 accept="image/*"
+                 ref="iptFileRef"
+                 @change="onCoverChangeFn"
+          />
+          <!-- 选择封面的按钮 -->
+          <el-button type="text" @click="chooseImgFn">+ 选择封面</el-button>
+        </el-form-item>
       </el-form>
     </el-dialog>
   </div>
@@ -75,6 +90,8 @@
 
 <script>
 import { getArtCateListAPI } from '@/api'
+// 导入默认的封面图片
+import defaultImg from '@/assets/images/cover.jpg'
 
 export default {
   name: 'ArtList',
@@ -93,7 +110,8 @@ export default {
       pubForm: {
         title: '', // 文章标题
         cate_id: '', // 分类id
-        content: '' // 文章内容
+        content: '', // 文章内容
+        cover_img: null // 保存的文件
       },
       // 表单的验证规则对象
       pubFormRules: {
@@ -133,7 +151,27 @@ export default {
       const { data: res } = await getArtCateListAPI()
       if (res.code === 0) {
         this.cateList = res.data
-        console.log(this.cateList)
+        // console.log(this.cateList)
+      }
+    },
+    // 点击选择文件，文件选择窗口出现，
+    chooseImgFn () {
+      this.$refs.iptFileRef.click()
+    },
+    // 封面选择改变的事件
+    onCoverChangeFn (e) {
+      // 获取用户选择的文件列表
+      const files = e.target.files
+      if (files.length === 0) {
+        // 用户没有选择封面
+        this.pubForm.cover_img = null
+        this.$refs.imgRef.setAttribute('src', defaultImg)
+      } else {
+        // 用户选择了封面
+        this.pubForm.cover_img = files[0]
+        // 把图片文件显示到img标签里
+        const url = URL.createObjectURL(files[0])
+        this.$refs.imgRef.setAttribute('src', url)
       }
     }
 
@@ -154,5 +192,12 @@ export default {
 
 ::v-deep .ql-editor {
   min-height: 300px;
+}
+
+// 设置图片封面的宽高
+.cover-img {
+  width: 400px;
+  height: 280px;
+  object-fit: cover;
 }
 </style>
