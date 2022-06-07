@@ -64,10 +64,10 @@
         <!--富文本编辑器-->
         <el-form-item label="文章内容" prop="content">
           <!-- 使用 v-model 进行双向的数据绑定 -->
-          <quill-editor v-model="pubForm.content"></quill-editor>
+          <quill-editor v-model="pubForm.content" @change="onEditorChangeFn"></quill-editor>
         </el-form-item>
         <!--文章封面-->
-        <el-form-item label="文章封面">
+        <el-form-item label="文章封面" prop="cover_img">
           <!-- 用来显示封面的图片 -->
           <img ref="imgRef" alt="" class="cover-img" src="../../assets/images/cover.jpg"/>
           <br/>
@@ -125,7 +125,9 @@ export default {
           { min: 1, max: 30, message: '文章标题的长度为1-30个字符', trigger: 'blur' }
         ],
         cate_id: [{ required: true, message: '请选择文章分类', trigger: 'change' }],
-        content: [{ required: true, message: '请输入文章内容', trigger: 'blur' }]
+        // 富文本验证规则
+        content: [{ required: true, message: '请输入文章内容', trigger: 'change' }],
+        cover_img: [{ required: true, message: '请选择封面', trigger: 'blur' }]
       },
       // 保存分类表单数据
       cateList: []
@@ -195,6 +197,11 @@ export default {
         if (!this.pubForm.cover_img) return this.message.error('请选择文章封面')
       })
       console.log(this.pubForm)
+    },
+    // 通过查阅文档，给富文本标签绑定change事件,利用elementUI中的Api进行部分字段的校验（validateField）
+    onEditorChangeFn () {
+    // 获取el-from的表单对象，部分校验字段
+      this.$refs.pubFormRef.validateField('content')
     }
   }
 }
