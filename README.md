@@ -15,7 +15,9 @@
 
 1.  注册账号登录
 ![注册](src/assets/images/iShot_2022-06-07_12.00.30.png)
+
 ![登录](src/assets/images/iShot_2022-06-07_12.00.19.png)
+
 2.  主页
 ![主页](src/assets/images/iShot_2022-06-07_12.01.10.png)
 
