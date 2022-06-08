@@ -57,7 +57,7 @@
       >
       </el-pagination>
     </el-card>
-    <!-- 发表文章的 Dialog 对话框 -->
+    <!-- 发表文章的 Dialog 对话框，fullscreen控制对话框全屏显示 -->
     <el-dialog
       :before-close="handleClose"
       :visible.sync="pubDialogVisible"
@@ -102,6 +102,22 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- 查看文章详情的对话框 -->
+    <el-dialog title="文章预览" :visible.sync="detailVisible" width="60%">
+      <h1 class="title">{{artDetail.title}}</h1>
+      <div class="info">
+        <span>作者：{{artDetail.nickname || artDetail.username}}</span>
+        <span>发布时间：{{$formatDate(artDetail.pub_date)}}</span>
+        <span>所属分类：{{artDetail.cate_name}}</span>
+        <span>状态：{{artDetail.state}}</span>
+      </div>
+      <!-- 分割线 -->
+      <el-divider></el-divider>
+      <!-- 文章的封面 -->
+      <img v-if="artDetail.cover_img" alt="" :src=" 'http://big-event-vue-api-t.itheima.net'+ artDetail.cover_img"/>
+      <!-- 文章的详情 -->
+      <div  class="detail-box" v-html="artDetail.content"></div>
+    </el-dialog>
   </div>
 </template>
 
@@ -124,6 +140,8 @@ export default {
       },
       // 控制对话框显示隐藏
       pubDialogVisible: false,
+      // 控制文章详情对话框的显示和隐藏
+      detailVisible: false,
       // 表单的数据对象
       pubForm: {
         title: '', // 文章标题
@@ -145,7 +163,8 @@ export default {
       },
       cateList: [], // 保存分类表单数据
       artList: [], // 文章的列表数据
-      total: 0 // 总数据条数
+      total: 0, // 总数据条数
+      artDetail: {} // 文章的详情信息对象
     }
   },
   // 在页面创建调用
@@ -280,8 +299,10 @@ export default {
     },
     // 文章标题的点击事件
     async showDetailFn (artID) {
-      const res = await getArtDetailAPI(artID)
-      console.log(res)
+      this.detailVisible = true // 出现详情对话框
+      const { data: res } = await getArtDetailAPI(artID)
+      this.artDetail = res.data
+      console.log(this.artDetail)
     }
   }
 }
@@ -311,5 +332,26 @@ export default {
 
 .el-pagination {
   margin-top: 15px;
+}
+.title {
+  font-size: 24px;
+  text-align: center;
+  font-weight: normal;
+  color: #000;
+  margin: 0 0 10px 0;
+}
+
+.info {
+  font-size: 12px;
+  span {
+    margin-right: 20px;
+  }
+}
+
+// 修改 dialog 内部元素的样式，需要添加样式穿透
+::v-deep .detail-box {
+  img {
+    width: 500px;
+  }
 }
 </style>
