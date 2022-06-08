@@ -24,6 +24,14 @@
 
 ![主页](src/assets/images/iShot_2022-06-07_12.01.10.png)
 
+3. 文章列表
+
+![输入图片说明](src/assets/images/iShot_2022-06-08_17.31.29.png)
+
+4. 文章分类
+
+![输入图片说明](src/assets/images/iShot_2022-06-08_17.31.19.png)
+
 
 #### 特技
 
