@@ -29,6 +29,15 @@
         <!-- 发表文章的按钮 -->
         <el-button class="btn-pub" size="small" type="primary" @click="showPubDialogFn">发表文章</el-button>
       </div>
+      <!-- 文章表格区域 -->
+      <el-table :data="artList" border stripe style="width: 100%;">
+        <el-table-column label="文章标题" prop="title"></el-table-column>
+        <el-table-column label="分类" prop="cate_name"></el-table-column>
+        <el-table-column label="发表时间" prop="pub_date"></el-table-column>
+        <el-table-column label="状态" prop="state"></el-table-column>
+        <el-table-column label="操作"></el-table-column>
+      </el-table>
+      <!--分页区域-->
     </el-card>
     <!-- 发表文章的 Dialog 对话框 -->
     <el-dialog
@@ -80,7 +89,7 @@
 
 <script>
 // 引入接口封装的方法
-import { getArtCateListAPI, uploadArticleAPI } from '@/api'
+import { getArtCateListAPI, uploadArticleAPI, getArtListAPI } from '@/api'
 // 导入默认的封面图片
 import defaultImg from '@/assets/images/cover.jpg'
 
@@ -116,15 +125,25 @@ export default {
         content: [{ required: true, message: '请输入文章内容', trigger: 'blur' }],
         cover_img: [{ required: true, message: '请选择封面', trigger: 'blur' }]
       },
-      // 保存分类表单数据
-      cateList: []
+      cateList: [], // 保存分类表单数据
+      artList: [], // 文章的列表数据
+      total: 0 // 总数据条数
     }
   },
   // 生命周期在组件获取文章分类
   created () {
+    // 请求分类数据，调用函数
     this.getCateListFn()
+    // 获取所有的文章列表，调用函数
+    this.getArtListFn()
   },
   methods: {
+    // 获取所有的文章列表
+    async getArtListFn () {
+      const { data: res } = await getArtListAPI(this.q)
+      this.artList = res.data // 保存获取的当前文章列表
+      this.total = res.total
+    },
     // 对话框关闭前的回调 发表文章
     // done调用放行，关闭对话框
     async handleClose (done) {
