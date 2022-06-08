@@ -31,7 +31,11 @@
       </div>
       <!-- 文章表格区域 -->
       <el-table :data="artList" border stripe style="width: 100%;">
-        <el-table-column label="文章标题" prop="title"></el-table-column>
+        <el-table-column label="文章标题" prop="title">
+          <template v-slot="scope">
+            <el-link type="primary" @click="showDetailFn(scope.row.id)">{{ scope.row.title }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column label="分类" prop="cate_name"></el-table-column>
         <el-table-column label="发表时间" prop="pub_date">
           <template v-slot="scope">
@@ -103,7 +107,7 @@
 
 <script>
 // 引入接口封装的方法
-import { getArtCateListAPI, uploadArticleAPI, getArtListAPI } from '@/api'
+import { getArtCateListAPI, uploadArticleAPI, getArtListAPI, getArtDetailAPI } from '@/api'
 // 导入默认的封面图片
 import defaultImg from '@/assets/images/cover.jpg'
 
@@ -157,7 +161,7 @@ export default {
       const { data: res } = await getArtListAPI(this.q)
       this.artList = res.data// 保存获取的当前文章列表
       this.total = res.total// 保存总数
-      console.log(this.artList)
+      // console.log(this.artList)
     },
     // done调用放行，关闭对话框，对话框关闭前的回调 发表文章
     async handleClose (done) {
@@ -250,6 +254,7 @@ export default {
     // 核心思想：改变每页的条数，根据选择的页码/条数，影响q对象对应属性的值，再重新发重新返回数据
     handleSizeChangeFn (size) {
       this.q.pagesize = size
+      this.q.pagenum = 1
       this.getArtListFn()
     },
     // 当前页码改变时触发
@@ -272,6 +277,11 @@ export default {
         state: ''
       }
       this.getArtListFn()
+    },
+    // 文章标题的点击事件
+    async showDetailFn (artID) {
+      const res = await getArtDetailAPI(artID)
+      console.log(res)
     }
   }
 }
