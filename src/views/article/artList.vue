@@ -22,8 +22,8 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button size="small" type="primary">筛选</el-button>
-            <el-button size="small" type="info">重置</el-button>
+            <el-button size="small" type="primary" @click="choseFn">筛选</el-button>
+            <el-button size="small" type="info" @click="resetFn">重置</el-button>
           </el-form-item>
         </el-form>
         <!-- 发表文章的按钮 -->
@@ -33,11 +33,25 @@
       <el-table :data="artList" border stripe style="width: 100%;">
         <el-table-column label="文章标题" prop="title"></el-table-column>
         <el-table-column label="分类" prop="cate_name"></el-table-column>
-        <el-table-column label="发表时间" prop="pub_date"></el-table-column>
+        <el-table-column label="发表时间" prop="pub_date">
+          <template v-slot="scope">
+            <span>{{ $formatDate(scope.row.pub_date) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="状态" prop="state"></el-table-column>
         <el-table-column label="操作"></el-table-column>
       </el-table>
-      <!--分页区域-->
+      <!-- 分页区域 -->
+      <el-pagination
+        :current-page.sync="q.pagenum"
+        :page-size.sync="q.pagesize"
+        :page-sizes="[2, 3, 5, 10]"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChangeFn"
+        @current-change="handleCurrentChangeFn"
+      >
+      </el-pagination>
     </el-card>
     <!-- 发表文章的 Dialog 对话框 -->
     <el-dialog
@@ -99,8 +113,8 @@ export default {
     return {
       // 查询参数对象
       q: {
-        pagenum: 1,
-        pagesize: 2,
+        pagenum: 1, // 默认第一页数据
+        pagesize: 2, // 默认当前页显示数据条数
         cate_id: '',
         state: ''
       },
@@ -130,7 +144,7 @@ export default {
       total: 0 // 总数据条数
     }
   },
-  // 生命周期在组件获取文章分类
+  // 在页面创建调用
   created () {
     // 请求分类数据，调用函数
     this.getCateListFn()
@@ -141,11 +155,11 @@ export default {
     // 获取所有的文章列表
     async getArtListFn () {
       const { data: res } = await getArtListAPI(this.q)
-      this.artList = res.data // 保存获取的当前文章列表
-      this.total = res.total
+      this.artList = res.data// 保存获取的当前文章列表
+      this.total = res.total// 保存总数
+      console.log(this.artList)
     },
-    // 对话框关闭前的回调 发表文章
-    // done调用放行，关闭对话框
+    // done调用放行，关闭对话框，对话框关闭前的回调 发表文章
     async handleClose (done) {
       // 询问用户是否确认关闭对话框
       const confirmResult = await this.$confirm('此操作将导致文章信息丢失, 是否继续?', '提示', {
@@ -212,7 +226,9 @@ export default {
           this.$message.success('发布文章成功！')
           // 关闭对话框
           this.pubDialogVisible = false
-          console.log(res)
+          // 重新获取列表数据
+          await this.getArtListFn()
+          // console.log(res)
         } else {
           return false
         }
@@ -229,6 +245,33 @@ export default {
       this.$refs.pubFormRef.resetFields()
       // 因为这2个变量对应的标签不是表单绑定的, 所以需要单独控制
       this.$refs.imgRef.setAttribute('src', defaultImg)
+    },
+    // 分页，每页条数改变触发
+    // 核心思想：改变每页的条数，根据选择的页码/条数，影响q对象对应属性的值，再重新发重新返回数据
+    handleSizeChangeFn (size) {
+      this.q.pagesize = size
+      this.getArtListFn()
+    },
+    // 当前页码改变时触发
+    handleCurrentChangeFn (newPage) {
+      this.q.pagenum = newPage
+      this.getArtListFn()
+    },
+    // 筛选点击事件
+    choseFn () {
+      this.q.pagesize = 2
+      this.q.pagenum = 1
+      this.getArtListFn()
+    },
+    // 重置
+    resetFn () {
+      this.q = {
+        pagenum: 1,
+        pagesize: 2,
+        cate_id: '',
+        state: ''
+      }
+      this.getArtListFn()
     }
   }
 }
@@ -254,5 +297,9 @@ export default {
   width: 400px;
   height: 280px;
   object-fit: cover;
+}
+
+.el-pagination {
+  margin-top: 15px;
 }
 </style>
