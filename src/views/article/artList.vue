@@ -326,6 +326,12 @@ export default {
       const { data: res } = await delArticleAPI(delID)
       if (res.code !== 0) return this.$message.error(res.message)
       this.$message.success(res.message)
+      // 判断解决最后一页删除文章无数据bug
+      if (this.artList.length === 1) {
+        if (this.q.pagenum > 1) {
+          this.q.pagenum--
+        }
+      }
       // 重新获取列表数据
       await this.getArtListFn()
     }
