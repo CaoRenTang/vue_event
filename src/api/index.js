@@ -173,3 +173,16 @@ export const getArtDetailAPI = (id) => {
     }
   })
 }
+/**
+ * 删除文章
+ * @return Promise对象
+ */
+export const delArticleAPI = (id) => {
+  return request({
+    url: '/my/article/info',
+    method: 'Delete',
+    params: {
+      id
+    }
+  })
+}

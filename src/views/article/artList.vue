@@ -43,7 +43,11 @@
           </template>
         </el-table-column>
         <el-table-column label="状态" prop="state"></el-table-column>
-        <el-table-column label="操作"></el-table-column>
+        <el-table-column label="操作">
+          <template v-slot="scope">
+            <el-button size="mini" type="danger" @click="removeFn(scope.row.id)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页区域 -->
       <el-pagination
@@ -103,30 +107,34 @@
       </el-form>
     </el-dialog>
     <!-- 查看文章详情的对话框 -->
-    <el-dialog title="文章预览" :visible.sync="detailVisible" width="60%">
-      <h1 class="title">{{artDetail.title}}</h1>
+    <el-dialog
+      :visible.sync="detailVisible"
+      title="文章预览"
+      width="60%">
+      <h1 class="title">{{ artDetail.title }}</h1>
       <div class="info">
-        <span>作者：{{artDetail.nickname || artDetail.username}}</span>
-        <span>发布时间：{{$formatDate(artDetail.pub_date)}}</span>
-        <span>所属分类：{{artDetail.cate_name}}</span>
-        <span>状态：{{artDetail.state}}</span>
+        <span>作者：{{ artDetail.nickname || artDetail.username }}</span>
+        <span>发布时间：{{ $formatDate(artDetail.pub_date) }}</span>
+        <span>所属分类：{{ artDetail.cate_name }}</span>
+        <span>状态：{{ artDetail.state }}</span>
       </div>
       <!-- 分割线 -->
       <el-divider></el-divider>
       <!-- 文章的封面 -->
-      <img v-if="artDetail.cover_img" alt="" :src=" baseURL + artDetail.cover_img"/>
+      <img v-if="artDetail.cover_img" :src=" baseURL + artDetail.cover_img" alt=""/>
       <!-- 文章的详情 -->
-      <div  class="detail-box" v-html="artDetail.content"></div>
+      <div class="detail-box" v-html="artDetail.content"></div>
     </el-dialog>
   </div>
 </template>
 
 <script>
 // 引入接口封装的方法
-import { getArtCateListAPI, uploadArticleAPI, getArtListAPI, getArtDetailAPI } from '@/api'
+import { getArtCateListAPI, uploadArticleAPI, getArtListAPI, getArtDetailAPI, delArticleAPI } from '@/api'
 // 导入默认的封面图片
 import defaultImg from '@/assets/images/cover.jpg'
 import { baseURL } from '@/utils/request'
+
 export default {
   name: 'ArtList',
   data () {
@@ -304,6 +312,22 @@ export default {
       const { data: res } = await getArtDetailAPI(artID)
       this.artDetail = res.data
       // console.log(this.artDetail)
+    },
+    // 删除文章内容
+    async removeFn (delID) {
+      const confirmResult = await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      // 2. 取消了删除
+      if (confirmResult === 'cancel') return
+      // 执行删除
+      const { data: res } = await delArticleAPI(delID)
+      if (res.code !== 0) return this.$message.error(res.message)
+      this.$message.success(res.message)
+      // 重新获取列表数据
+      await this.getArtListFn()
     }
   }
 }
@@ -334,6 +358,7 @@ export default {
 .el-pagination {
   margin-top: 15px;
 }
+
 .title {
   font-size: 24px;
   text-align: center;
@@ -344,6 +369,7 @@ export default {
 
 .info {
   font-size: 12px;
+
   span {
     margin-right: 20px;
   }
