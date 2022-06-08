@@ -6,8 +6,9 @@ import { Message } from 'element-ui'
 
 // axios.create()创建一个带配置项的自定义axios函数
 // myAxios请求的时候, 地址baseURL+url, 然后去请求后台
+export const baseURL = 'http://big-event-vue-api-t.itheima.net'
 const myAxios = axios.create({
-  baseURL: 'http://big-event-vue-api-t.itheima.net'
+  baseURL: baseURL
 })
 
 // 定义请求拦截器

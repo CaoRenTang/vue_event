@@ -114,7 +114,7 @@
       <!-- 分割线 -->
       <el-divider></el-divider>
       <!-- 文章的封面 -->
-      <img v-if="artDetail.cover_img" alt="" :src=" 'http://big-event-vue-api-t.itheima.net'+ artDetail.cover_img"/>
+      <img v-if="artDetail.cover_img" alt="" :src=" baseURL + artDetail.cover_img"/>
       <!-- 文章的详情 -->
       <div  class="detail-box" v-html="artDetail.content"></div>
     </el-dialog>
@@ -126,7 +126,7 @@
 import { getArtCateListAPI, uploadArticleAPI, getArtListAPI, getArtDetailAPI } from '@/api'
 // 导入默认的封面图片
 import defaultImg from '@/assets/images/cover.jpg'
-
+import { baseURL } from '@/utils/request'
 export default {
   name: 'ArtList',
   data () {
@@ -164,7 +164,8 @@ export default {
       cateList: [], // 保存分类表单数据
       artList: [], // 文章的列表数据
       total: 0, // 总数据条数
-      artDetail: {} // 文章的详情信息对象
+      artDetail: {}, // 文章的详情信息对象
+      baseURL // 服务器基地址
     }
   },
   // 在页面创建调用
@@ -302,7 +303,7 @@ export default {
       this.detailVisible = true // 出现详情对话框
       const { data: res } = await getArtDetailAPI(artID)
       this.artDetail = res.data
-      console.log(this.artDetail)
+      // console.log(this.artDetail)
     }
   }
 }
