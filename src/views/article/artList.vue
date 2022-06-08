@@ -28,21 +28,6 @@
         </el-form>
         <!-- 发表文章的按钮 -->
         <el-button class="btn-pub" size="small" type="primary" @click="showPubDialogFn">发表文章</el-button>
-        <!-- 发表文章的 Dialog 对话框 -->
-        <el-dialog :before-close="handleClose" :visible.sync="pubDialogVisible" fullscreen title="发表文章">
-          <!-- 发布文章的对话框 -->
-          <el-form ref="pubFormRef" :model="pubForm" :rules="pubFormRules" label-width="100px">
-            <el-form-item label="文章标题" prop="title">
-              <el-input v-model="pubForm.title" placeholder="请输入标题"></el-input>
-            </el-form-item>
-            <el-form-item label="文章分类" prop="cate_id">
-              <el-select v-model="pubForm.cate_id" placeholder="请选择分类" style="width: 100%;">
-                <el-option v-for="obj in cateList" :key="obj.id" :label="obj.cate_name"
-                           :value="obj.id"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </el-dialog>
       </div>
     </el-card>
     <!-- 发表文章的 Dialog 对话框 -->
@@ -50,7 +35,9 @@
       :before-close="handleClose"
       :visible.sync="pubDialogVisible"
       fullscreen
-      title="发表文章">
+      title="发表文章"
+      @closed="onDialogClosedFn"
+    >
       <!-- 发布文章的对话框 -->
       <el-form ref="pubFormRef" :model="pubForm" :rules="pubFormRules" label-width="100px">
         <el-form-item label="文章标题" prop="title">
@@ -64,7 +51,7 @@
         <!--富文本编辑器-->
         <el-form-item label="文章内容" prop="content">
           <!-- 使用 v-model 进行双向的数据绑定 -->
-          <quill-editor v-model="pubForm.content" @change="onEditorChangeFn"></quill-editor>
+          <quill-editor v-model="pubForm.content" @blur="onEditorChangeFn"></quill-editor>
         </el-form-item>
         <!--文章封面-->
         <el-form-item label="文章封面" prop="cover_img">
@@ -93,7 +80,7 @@
 
 <script>
 // 引入接口封装的方法
-import { getArtCateListAPI } from '@/api'
+import { getArtCateListAPI, uploadArticleAPI } from '@/api'
 // 导入默认的封面图片
 import defaultImg from '@/assets/images/cover.jpg'
 
@@ -126,7 +113,7 @@ export default {
         ],
         cate_id: [{ required: true, message: '请选择文章分类', trigger: 'change' }],
         // 富文本验证规则
-        content: [{ required: true, message: '请输入文章内容', trigger: 'change' }],
+        content: [{ required: true, message: '请输入文章内容', trigger: 'blur' }],
         cover_img: [{ required: true, message: '请选择封面', trigger: 'blur' }]
       },
       // 保存分类表单数据
@@ -184,24 +171,45 @@ export default {
         const url = URL.createObjectURL(files[0])
         this.$refs.imgRef.setAttribute('src', url)
       }
+      // 让表单单独校验文章封面
+      this.$refs.pubFormRef.validateField('cover_img')
     },
     // 表单里面点击发布存为草稿按钮的点击事件
     pubArticleFn (str) {
       // 设置发布状态
       this.pubForm.state = str
       // 校验表单如果没有内容，则提示
-      this.$refs.pubFormRef.validate(valid => {
-        // 表单预检验
-        if (!valid) return this.$message.error('请完善文章信息')
-        // 文章封面检验
-        if (!this.pubForm.cover_img) return this.message.error('请选择文章封面')
+      this.$refs.pubFormRef.validate(async valid => {
+        if (valid) {
+          console.log(this.pubForm)
+          const fd = new FormData()
+          // 向 FormData 中追加数据
+          Object.keys(this.pubForm).forEach((key) => {
+            fd.append(key, this.pubForm[key])
+          })
+          // 发起请求
+          const { data: res } = await uploadArticleAPI(fd)
+          if (res.code !== 0) return this.$message.error('发布文章失败！')
+          this.$message.success('发布文章成功！')
+          // 关闭对话框
+          this.pubDialogVisible = false
+          console.log(res)
+        } else {
+          return false
+        }
       })
-      console.log(this.pubForm)
     },
     // 通过查阅文档，给富文本标签绑定change事件,利用elementUI中的Api进行部分字段的校验（validateField）
     onEditorChangeFn () {
-    // 获取el-from的表单对象，部分校验字段
+      // 获取el-from的表单对象，部分校验字段
       this.$refs.pubFormRef.validateField('content')
+    },
+    // 发布完成之后清空对话框的内容
+    onDialogClosedFn () {
+      // 清空关键数据
+      this.$refs.pubFormRef.resetFields()
+      // 因为这2个变量对应的标签不是表单绑定的, 所以需要单独控制
+      this.$refs.imgRef.setAttribute('src', defaultImg)
     }
   }
 }
